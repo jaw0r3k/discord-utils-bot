@@ -34,7 +34,7 @@ export async function algoliaResponse(
 			`${target ? `${italic(`Suggestion for ${userMention(target)}:`)}\n` : ''}<:${emojiName}:${emojiId}>  ${bold(
 				resolveHitToNamestring(hit),
 			)}${hit.content?.length ? `\n${truncate(decode(hit.content), 300)}` : ''}\n${hyperlink(
-				'read more',
+				hit.content?.length ? 'read more' : 'read the article',
 				hideLinkEmbed(hit.url),
 			)}`,
 			false,
