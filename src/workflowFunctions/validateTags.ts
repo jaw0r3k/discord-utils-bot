@@ -46,6 +46,7 @@ interface ValidationResult {
 export async function validateTags(
 	runResponseValidation: boolean,
 	_additionalTagData?: string,
+	{ checkForUniqueKeywords=true } = {}
 ): Promise<ValidationResult> {
 	const file = readFileSync(join(__dirname, '..', '..', 'tags', 'tags.toml'));
 
@@ -143,21 +144,23 @@ export async function validateTags(
 			});
 		}
 
-		for (const [otherKey, otherValue] of Object.entries(data)) {
-			const oV = otherValue as unknown as Tag;
-			if (key !== otherKey) {
-				const conflictKeyWords = v.keywords.filter((k) => oV.keywords.includes(k) || otherKey === k);
-
-				if (
-					conflictKeyWords.length &&
-					!conflicts.some((c) => [c.firstName, c.secondName].every((e) => [key, otherKey].includes(e)))
-				) {
-					conflicts.push({
+		if (checkForUniqueKeywords) {
+			for (const [otherKey, otherValue] of Object.entries(data)) {
+				const oV = otherValue as unknown as Tag;
+				if (key !== otherKey) {
+					const conflictKeyWords = v.keywords.filter((k) => oV.keywords.includes(k) || otherKey === k);
+					
+					if (
+						conflictKeyWords.length &&
+						!conflicts.some((c) => [c.firstName, c.secondName].every((e) => [key, otherKey].includes(e)))
+						) {
+							conflicts.push({
 						firstName: key,
 						secondName: otherKey,
 						conflictKeyWords,
 						type: ConflictType.UniqueKeywords,
-					});
+						});
+					}
 				}
 			}
 		}

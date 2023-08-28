@@ -59,7 +59,7 @@ export async function testTagModalSubmit(res: Response, message: APIModalSubmitI
 
 	try {
 		const parsedTag = parseTagShape(tagData.value);
-		const result = await validateTags(false, tagData.value);
+		const result = await validateTags(false, tagData.value, { checkForUniqueKeywords: false });
 
 		const hasErrors = result.errors.length;
 		const hasWarnings = result.warnings.length;
